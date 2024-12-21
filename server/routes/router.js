@@ -37,6 +37,26 @@ router.get("/getpartners", async(req, res) => {
     }
 });
 
+//updating delivery partner data
+router.put("/updatePartner/:id", async(req,res) => {
+    try {
+        const { id } = req.params;
+        const updatedPartnerData = await Partners.findByIdAndUpdate(id, req.body, {
+            new: true,
+            runValidators: true,
+        });
+
+        if(!updatedPartnerData) {
+            res.status(400).json({error: "Partner is not present."})
+        }
+
+        console.log(updatedPartnerData);
+        res.status(200).json({updatedPartnerData});
+    } catch(error) {
+        res.status(400).json({error});
+    }
+});
+
 //get ordersData API
 router.get("/getorders", async(req, res) => {
     try {

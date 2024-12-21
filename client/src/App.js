@@ -5,6 +5,7 @@ import NavBar from './components/NavBar';
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Partners = lazy(() => import('./pages/Partners'));
 const PartnerRegister = lazy(() => import('./components/PartnerRegister'));
+const EditPartner = lazy(() => import('./components/EditPartner'));
 const Orders = lazy(() => import('./pages/Orders'));
 const AssignDash = lazy(() => import('./pages/AssignDash'));
 
@@ -17,6 +18,7 @@ function App() {
           <Route path='/' element ={ <Dashboard />} />
           <Route path='/partners' element = { <Partners /> } />
           <Route path='/partners/register' element = { <PartnerRegister />} />
+          <Route path='/partners/edit/:id' element = { <EditPartner />} />
           <Route path='/orders' element = {<Orders />} />
           <Route path='/assignments' element = { <AssignDash />} />
         </Routes>
