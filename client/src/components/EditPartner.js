@@ -4,12 +4,18 @@ import { fetchPartners } from '../features/partnerSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const EditPartner = () => {
-  const { data:partners } = useSelector((state) => state.partners);
+  const [partners, setPartners] = useState([]);
+
+  const { data } = useSelector((state) => state.partners);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchPartners());
   }, [dispatch]);
+
+  useEffect(() => {
+    setPartners(data);
+  }, [data]);
 
   const navigate = useNavigate();
 
@@ -55,9 +61,7 @@ const EditPartner = () => {
     });
   };
 
-  const handleEdit = async(id,e) => {
-    e.preventDefault();
-
+  const handleEdit = async(id) => {
     const { editName, editEmail, editNumber, editStatus, editCurrentLoad, editAreas,
       editShift: { editStartTime, editEndTime },
       editMetrics: { editRating, editCompletedOrders, editCancelledOrders } } = editPartnerData;
@@ -68,15 +72,17 @@ const EditPartner = () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        editName, editEmail, editNumber, editStatus, editCurrentLoad, editAreas, editStartTime, editEndTime, 
-        editRating, editCompletedOrders, editCancelledOrders
+        editName, editEmail, editNumber, editStatus, editCurrentLoad, editAreas, editShift: { editStartTime, editEndTime }, 
+        editMetrics: { editRating, editCompletedOrders, editCancelledOrders }
       })
     });
 
     const data = await res.json();
+    console.log(data);
     if(res.status === 400 || !data) {
       alert("Something went wrong.");
     } else {
+      setPartners(partners.map(partner => partner._id === id ? { data } : partner));
       alert("Partner data edited successfuly !!");
       navigate("/partners");
     }
@@ -84,6 +90,8 @@ const EditPartner = () => {
 
   const { id } = useParams();
   const partner = partners.find(partner => (partner._id) === id);
+
+  console.log(id);
 
   useEffect(() => {
     if(partner) {
@@ -110,7 +118,7 @@ const EditPartner = () => {
   return (
     <div className='mt-8'>
       <div className='flex justify-center items-center'>
-        <form className='flex flex-col'>
+        <form className='flex flex-col' onSubmit={(e) => e.preventDefault()}>
           <div className='flex flex-col mt-5'>
             <label htmlFor='editName'>Name:</label>
             <input
@@ -247,7 +255,7 @@ const EditPartner = () => {
               id='editCancelledOrders'
             />
           </div>
-          <button className='m-10 w-20 h-8 bg-blue-950 text-white rounded-lg font-semibold mx-auto' onClick={(e) =>handleEdit(partner._id,e)}>Edit</button>
+          <button className='m-10 w-20 h-8 bg-blue-950 text-white rounded-lg font-semibold mx-auto' type='submit' onClick={() =>handleEdit(partner._id)}>Edit</button>
         </form>
       </div>
     </div>
